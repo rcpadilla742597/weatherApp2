@@ -1,7 +1,9 @@
 import 'dart:convert';
 import 'dart:io';
+import 'package:flutter/material.dart';
 import 'package:get/get_state_manager/get_state_manager.dart';
 import 'package:get/state_manager.dart';
+import 'package:hive_flutter/hive_flutter.dart';
 import 'package:http/http.dart' as http;
 import 'package:weather_app_2/models/homescreen/currentweather_model.dart';
 import 'package:weather_app_2/models/homescreen/forecastweather_model.dart';
@@ -9,41 +11,27 @@ import 'package:weather_app_2/models/homescreen/timelineweather_model.dart';
 import 'package:weather_app_2/models/weather_model.dart';
 import 'package:dart_ipify/dart_ipify.dart';
 
-class HomeScreenController extends GetxController
+class SearchScreenController extends GetxController
     with StateMixin<WeatherModel> {
-  var location = 'Tampa'; //default value
+  var textController = TextEditingController()
+      .obs; //whenever i change the value you see it on the ui. getx gives you access to obs
+
   // onInit gets called when HomeScreenController is created
   @override
   void onInit() {
-    weatherFetch();
+    change(null, status: RxStatus.empty());
     // super refers to GetxController. HomeScreenController is a child which extends GetxController.
     super.onInit();
     //My contribution to the parent
   }
 
-  Future<void> geoLocator() async {
-    change(WeatherModel(c: CurrentWeatherModel.empty()),
-        status: RxStatus.loading());
-    var query = await Ipify.ipv4();
-    var response = await http.get(
-        Uri.parse('http://ip-api.com/json/${query}?fields=status,city,query'));
-    var test = jsonDecode(response.body);
-    location = test["city"];
-    if (response.statusCode != 200) {
-      throw HttpException('${response.statusCode}');
-    } else {
-      // message prints below if geolocator was successful
-      print("Successful connection");
-    }
-  }
-
   weatherFetch() async {
     try {
+      change(null, status: RxStatus.loading());
       // trys below
-      await geoLocator();
 
       var response = await http.get(Uri.parse(
-          'https://api.openweathermap.org/data/2.5/forecast?q=${location}&appid=fe514ac7e7ef730c4b1da547d4a2e9ea'));
+          'https://api.openweathermap.org/data/2.5/forecast?q=${textController.value.text}&appid=fe514ac7e7ef730c4b1da547d4a2e9ea'));
       if (response.statusCode != 200) {
         throw HttpException('${response.statusCode}');
       } else {
@@ -73,7 +61,7 @@ class HomeScreenController extends GetxController
         });
 
         var cardResponse = await http.get(Uri.parse(
-            'https://api.openweathermap.org/data/2.5/weather?q=${location}&appid=49a2adca18d67e77118367efe5497060'));
+            'https://api.openweathermap.org/data/2.5/weather?q=${textController.value.text}&appid=49a2adca18d67e77118367efe5497060'));
 
         if (cardResponse.statusCode != 200) {
           throw HttpException('${cardResponse.statusCode}');
@@ -87,8 +75,10 @@ class HomeScreenController extends GetxController
           var x = WeatherModel.filled(c: c, f: f, t: t);
           value = WeatherModel.filled(c: c, f: f, t: t);
           update();
+          var box = Hive.box('history');
+          // box.put('historyList',
+          //     box.get('historyList').add(textController.value.text));
           print(value);
-          print('hello');
         }
       }
     } catch (e) {

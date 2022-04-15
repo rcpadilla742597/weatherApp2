@@ -4,19 +4,21 @@ import 'package:weather_app_2/models/homescreen/timelineweather_model.dart';
 import 'homescreen/currentweather_model.dart';
 
 class WeatherModel {
-  late CurrentWeatherModel c;
-  late List<ForecastWeatherModel> f;
-  late List<TimelineWeatherModel> t;
+  CurrentWeatherModel c = CurrentWeatherModel.empty();
+  List<ForecastWeatherModel> f = [];
+  List<TimelineWeatherModel> t = [];
 
-  addC(c) {
+  WeatherModel(
+      {required CurrentWeatherModel c,
+      List<ForecastWeatherModel> f = const [],
+      List<TimelineWeatherModel> t = const []});
+
+  WeatherModel.filled(
+      {required CurrentWeatherModel c,
+      required List<ForecastWeatherModel> f,
+      required List<TimelineWeatherModel> t}) {
     this.c = c;
-  }
-
-  addF(f) {
     this.f = f;
-  }
-
-  addT(t) {
     this.t = t;
   }
 }
