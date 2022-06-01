@@ -24,11 +24,6 @@ extension RoundDouble on double {
   }
 }
 
-// Widget myPadding(double padding) => Padding(
-//         padding: EdgeInsets.all(padding),
-//         child: this,
-//       );
-
 // Attaching hello to string
 extension Hello on String {
   String toHello() {
@@ -63,4 +58,18 @@ extension PaddingExtensions on Widget {
         padding: EdgeInsets.all(padding),
         child: this,
       );
+}
+
+extension TimeZone on int {
+  String toDate() {
+    if (this == 0) {
+      return 'Error';
+    }
+
+    DateTime currentDate = new DateTime.now().toUtc();
+
+    DateTime utcDate = currentDate.subtract(new Duration(seconds: this.abs()));
+    print(utcDate);
+    return '$utcDate';
+  }
 }

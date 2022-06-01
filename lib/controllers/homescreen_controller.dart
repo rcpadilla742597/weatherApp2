@@ -33,7 +33,6 @@ class HomeScreenController extends GetxController
       throw HttpException('${response.statusCode}');
     } else {
       // message prints below if geolocator was successful
-      print("Successful connection");
     }
   }
 
@@ -61,16 +60,13 @@ class HomeScreenController extends GetxController
         var t = shortList
             .map((jsonInList) => TimelineWeatherModel.fromJson(jsonInList))
             .toList();
-        print(t);
 
         loWeather.forEach((jsonInList) =>
             jsonInList = ForecastWeatherModel.fromJson(jsonInList));
         var f = loWeather
             .map((jsonInList) => ForecastWeatherModel.fromJson(jsonInList))
             .toList();
-        t.forEach((element) {
-          print(element.time);
-        });
+        t.forEach((element) {});
 
         var cardResponse = await http.get(Uri.parse(
             'https://api.openweathermap.org/data/2.5/weather?q=${location}&appid=49a2adca18d67e77118367efe5497060'));
@@ -78,7 +74,6 @@ class HomeScreenController extends GetxController
         if (cardResponse.statusCode != 200) {
           throw HttpException('${cardResponse.statusCode}');
         } else {
-          print(t);
           var loCardWeather = jsonDecode(cardResponse.body);
 
           var c = CurrentWeatherModel.fromJson(loCardWeather);
@@ -87,8 +82,6 @@ class HomeScreenController extends GetxController
           var x = WeatherModel.filled(c: c, f: f, t: t);
           value = WeatherModel.filled(c: c, f: f, t: t);
           update();
-          print(value);
-          print('hello');
         }
       }
     } catch (e) {

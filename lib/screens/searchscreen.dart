@@ -3,6 +3,7 @@ import 'package:flutter/foundation.dart';
 import 'package:flutter/material.dart';
 import 'package:get/get.dart';
 import 'package:weather_app_2/constants/colors.dart';
+import 'package:weather_app_2/constants/textConstants.dart';
 import 'package:weather_app_2/controllers/homescreen_controller.dart';
 import 'package:weather_app_2/controllers/searchscreencontroller.dart';
 import 'package:weather_app_2/models/homescreen/currentweather_model.dart';
@@ -19,65 +20,73 @@ class SearchScreen extends GetView<SearchScreenController> {
   Widget build(BuildContext context) {
     return Scaffold(
         backgroundColor: Colors.white,
-        body: Center(
-            child: SingleChildScrollView(
-                child: Column(
+        body: SingleChildScrollView(
+            child: Column(
+                crossAxisAlignment: CrossAxisAlignment.start,
+                mainAxisAlignment: MainAxisAlignment.start,
+                children: [
+              Container(
+                height: 50,
+                child: Row(
                     crossAxisAlignment: CrossAxisAlignment.start,
-                    mainAxisAlignment: MainAxisAlignment.spaceAround,
-                    children: [
-              Form(
-                  child: Column(
-                      crossAxisAlignment: CrossAxisAlignment.start,
-                      children: <Widget>[
-                    TextFormField(
-                      controller: controller.textController.value,
-                      decoration: const InputDecoration(
-                        hintText: 'Search',
-                      ),
-                    ),
-                    Padding(
-                        padding: const EdgeInsets.symmetric(vertical: 16.0),
-                        child: ElevatedButton(
-                          onPressed: () {
-                            controller.weatherFetch();
-                            print(controller.textController.value.text);
+                    children: <Widget>[
+                      Expanded(
+                        child: TextFormField(
+                          onChanged: (value) {
+                            controller.historyFetch();
                           },
-                          child: const Text('Submit'),
-                        ))
-                  ])),
+                          controller: controller.textController.value,
+                          decoration: InputDecoration(
+                              hintText: 'Search',
+                              suffixIcon: IconButton(
+                                icon: const Icon(Icons.close),
+                                onPressed: () {
+                                  controller.clear();
+                                },
+                              )),
+                        ),
+                      ),
+                      Padding(
+                          padding: const EdgeInsets.symmetric(vertical: 16.0),
+                          child: ElevatedButton(
+                            onPressed: () {
+                              controller.weatherFetch();
+                            },
+                            child: const Text('Submit'),
+                          )),
+                    ]),
+              ),
+              Container(height: 100),
               controller.obx((state) {
                 print(state!.t);
                 return Center(
                   child: Column(children: [
-                    // the first thing here is a value listener builder attached to a box, extra
-                    Text('${box.get('value')}'),
-
                     ValueListenableBuilder<Box>(
                         valueListenable: Hive.box('favorites').listenable(),
                         builder: (context, value, _) {
-                          print('$value');
+                          print(box.containsKey(state.c.location));
+
                           return Column(
                             children: [
                               IconButton(
-                                icon: box.get(state.c.location) ?? false
+                                icon: box.containsKey(state.c.location)
                                     ? Icon(Icons.favorite)
                                     : Icon(Icons.favorite_border),
                                 onPressed: () {
                                   if (box.containsKey(state.c.location)) {
-                                    box.put(state.c.location,
-                                        !box.get(state.c.location));
+                                    box.delete(state.c.location);
                                   } else {
-                                    box.put(state.c.location, true);
+                                    box.put(state.c.location, {
+                                      "timezone": state.c.timezone,
+                                      "favorite": true
+                                    });
                                   }
-
-                                  print('result: ${box.get('testKey')}');
                                 },
                               ),
                             ],
                           );
                           // always lsitening to the value of testKey, so if testkey ever changes this text wiget will change as well
                         }),
-
                     Container(
                       decoration: BoxDecoration(
                         gradient: LinearGradient(
@@ -226,7 +235,6 @@ class SearchScreen extends GetView<SearchScreenController> {
                             DataColumn(label: Text('Temperature')),
                           ],
                           rows: state.t.map((weather) {
-                            print(weather.picture);
                             int day = weather.time;
                             double temp = weather.temp;
                             return DataRow(cells: <DataCell>[
@@ -249,12 +257,53 @@ class SearchScreen extends GetView<SearchScreenController> {
                   ]),
                 );
               },
-                  onEmpty: Container(
-                      child: Text(
-                          Hive.box('history').get('historyList').toString())))
-            ]))));
+                  onEmpty: ValueListenableBuilder<Box>(
+                      valueListenable: Hive.box('history').listenable(),
+                      builder: (context, hBox, _) {
+                        var listFromH = hBox.get('historyList').toList();
+
+                        var updatedLength;
+                        if (listFromH.length >= 5) {
+                          updatedLength = listFromH.sublist(0, 5).length;
+                        } else {
+                          updatedLength = listFromH.length;
+                        }
+                        return Column(
+                          children: [
+                            Container(
+                              width: 200,
+                              height: 200,
+                              child: ListView.builder(
+                                  shrinkWrap: true,
+                                  itemCount: updatedLength,
+                                  itemBuilder: (context, index) {
+                                    var value =
+                                        listFromH.reversed.toList()[index];
+                                    if (value != null) {
+                                      return TextButton(
+                                        onPressed: () {
+                                          controller.reFetch(value);
+                                        },
+                                        //pass textstyle from constants files
+                                        child: Text(
+                                          value,
+                                          textAlign: TextAlign.start,
+                                          style: listItemStyle,
+                                        ),
+                                      );
+                                    } else {
+                                      return Container();
+                                    }
+                                  }),
+                            ),
+                          ],
+                        );
+                      }))
+            ])));
   }
 }
+
+//add valuelistenable around container, so you can see it update. do the same thing we did for profile screen. Implement a listview builder.
 
 //hw design search bar, ui of it
 // when i click on the search bar and start typing, i want to set the state of my search screen controller to empty so that i can see my history. when i start typing how can i execute a function.

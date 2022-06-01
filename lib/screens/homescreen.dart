@@ -8,9 +8,6 @@ import 'package:weather_app_2/models/homescreen/currentweather_model.dart';
 import 'package:weather_app_2/models/homescreen/extenstions.dart';
 import 'package:weather_app_2/screens/controlscreen.dart';
 
-
-
-
 class HomeScreen extends GetView<HomeScreenController> {
   @override
   Widget build(BuildContext context) {
@@ -164,7 +161,6 @@ class HomeScreen extends GetView<HomeScreenController> {
                       DataColumn(label: Text('Temperature')),
                     ],
                     rows: state.t.map((weather) {
-                      print(weather.picture);
                       int day = weather.time;
                       double temp = weather.temp;
                       return DataRow(cells: <DataCell>[
@@ -194,11 +190,9 @@ class HomeScreen extends GetView<HomeScreenController> {
         onEmpty: Text('No data found'),
         // here also you can set your own error widget, but by
         // default will be an Center(child:Text(error))
-        onError: (error) => Text('error'),
+        onError: (error) => Text('erro'),
       ),
       backgroundColor: Colors.white,
     );
   }
 }
-
-

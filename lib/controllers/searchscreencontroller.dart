@@ -25,6 +25,17 @@ class SearchScreenController extends GetxController
     //My contribution to the parent
   }
 
+  clear() {
+    textController.value.text = '';
+    historyFetch();
+  } //HW 4/23/22 needs button with onpressed function. it's going to be inside the textformfield. look through docs for something that shows you can add a button where the X button is
+  // FIGURE OUT A WAY TO NOt CREATE DUPLICATES IN THE HISTORY LIST. first check if the value exists in the list, if it does, then dont add it if it doesnt then proceed to add it
+
+  reFetch(String location) {
+    textController.value.text = location;
+    weatherFetch();
+  }
+
   weatherFetch() async {
     try {
       change(null, status: RxStatus.loading());
@@ -49,16 +60,13 @@ class SearchScreenController extends GetxController
         var t = shortList
             .map((jsonInList) => TimelineWeatherModel.fromJson(jsonInList))
             .toList();
-        print(t);
 
         loWeather.forEach((jsonInList) =>
             jsonInList = ForecastWeatherModel.fromJson(jsonInList));
         var f = loWeather
             .map((jsonInList) => ForecastWeatherModel.fromJson(jsonInList))
             .toList();
-        t.forEach((element) {
-          print(element.time);
-        });
+        t.forEach((element) {});
 
         var cardResponse = await http.get(Uri.parse(
             'https://api.openweathermap.org/data/2.5/weather?q=${textController.value.text}&appid=49a2adca18d67e77118367efe5497060'));
@@ -66,7 +74,6 @@ class SearchScreenController extends GetxController
         if (cardResponse.statusCode != 200) {
           throw HttpException('${cardResponse.statusCode}');
         } else {
-          print(t);
           var loCardWeather = jsonDecode(cardResponse.body);
 
           var c = CurrentWeatherModel.fromJson(loCardWeather);
@@ -76,14 +83,28 @@ class SearchScreenController extends GetxController
           value = WeatherModel.filled(c: c, f: f, t: t);
           update();
           var box = Hive.box('history');
-          // box.put('historyList',
-          //     box.get('historyList').add(textController.value.text));
-          print(value);
+          //Open box
+          // load box value of historyList into a variable x
+          // add the current location into x
+          // put x into historyList
+
+          var listFromH = box.get('historyList');
+          while (listFromH.remove(c.location)) {}
+          var listModified = [...listFromH, c.location];
+          box.put('historyList', listModified);
+          //whatever is nested deepest gets executed first. which is why box.get gets executed first
+          //whatever we typed* not typing
+
         }
       }
     } catch (e) {
       change(WeatherModel(c: CurrentWeatherModel.empty()),
           status: RxStatus.error('error'));
     }
+  }
+
+  historyFetch() async {
+    change(WeatherModel(c: CurrentWeatherModel.empty()),
+        status: RxStatus.empty());
   }
 }

@@ -16,7 +16,6 @@ class TimelineWeatherModel {
   }
 // this is a factory constructor to create a timeline model from json data
   factory TimelineWeatherModel.fromJson(Map<dynamic, dynamic> json) {
-    print(json['main']['temp'].runtimeType);
     return TimelineWeatherModel(
         picture:
             "https://openweathermap.org/img/wn/${json['weather'][0]['icon']}@2x.png",
