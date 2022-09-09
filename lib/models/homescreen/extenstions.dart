@@ -52,24 +52,34 @@ extension TimeExtensions on int {
   }
 }
 
-// Padding
+// Padding for the Main Card
 extension PaddingExtensions on Widget {
   Widget myPadding(double padding) => Padding(
-        padding: EdgeInsets.all(padding),
+        padding: const EdgeInsets.fromLTRB(15, 10, 0, 10),
+        child: this,
+      );
+}
+
+// Padding for the Card Date -> Time on 'Favorites' Profile Screen
+extension InsideCardPaddingExtensions on Widget {
+  Widget insidePadding(double padding) => Padding(
+        padding: const EdgeInsets.fromLTRB(5, 0, 0, 0),
         child: this,
       );
 }
 
 extension TimeZone on int {
-  String toDate() {
+  TimeOfDay toDate() {
     if (this == 0) {
-      return 'Error';
+      return TimeOfDay.now();
+      // not ideal, not the optimal solution
     }
 
     DateTime currentDate = new DateTime.now().toUtc();
-
     DateTime utcDate = currentDate.subtract(new Duration(seconds: this.abs()));
-    print(utcDate);
-    return '$utcDate';
+
+    var myTime = TimeOfDay.fromDateTime(utcDate);
+
+    return myTime;
   }
 }

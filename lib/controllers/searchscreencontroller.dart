@@ -28,8 +28,7 @@ class SearchScreenController extends GetxController
   clear() {
     textController.value.text = '';
     historyFetch();
-  } //HW 4/23/22 needs button with onpressed function. it's going to be inside the textformfield. look through docs for something that shows you can add a button where the X button is
-  // FIGURE OUT A WAY TO NOt CREATE DUPLICATES IN THE HISTORY LIST. first check if the value exists in the list, if it does, then dont add it if it doesnt then proceed to add it
+  }
 
   reFetch(String location) {
     textController.value.text = location;
@@ -106,5 +105,18 @@ class SearchScreenController extends GetxController
   historyFetch() async {
     change(WeatherModel(c: CurrentWeatherModel.empty()),
         status: RxStatus.empty());
+  }
+
+  // Create update favorites function in search screen.dart
+
+  likeBtn() async {
+    var box = Hive.box('favorites');
+
+    if (box.containsKey(state?.c.location)) {
+      box.delete(state?.c.location);
+    } else {
+      box.put(
+          state?.c.location, {"timezone": state?.c.timezone, "favorite": true});
+    }
   }
 }

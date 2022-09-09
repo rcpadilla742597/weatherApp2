@@ -1,4 +1,3 @@
-import 'dart:html';
 import 'package:flutter/foundation.dart';
 import 'package:flutter/material.dart';
 import 'package:get/get.dart';
@@ -26,28 +25,33 @@ class SearchScreen extends GetView<SearchScreenController> {
                 mainAxisAlignment: MainAxisAlignment.start,
                 children: [
               Container(
-                height: 50,
+                height: 70,
                 child: Row(
                     crossAxisAlignment: CrossAxisAlignment.start,
                     children: <Widget>[
                       Expanded(
-                        child: TextFormField(
-                          onChanged: (value) {
-                            controller.historyFetch();
-                          },
-                          controller: controller.textController.value,
-                          decoration: InputDecoration(
-                              hintText: 'Search',
-                              suffixIcon: IconButton(
-                                icon: const Icon(Icons.close),
-                                onPressed: () {
-                                  controller.clear();
-                                },
-                              )),
+                        child: Padding(
+                          padding: const EdgeInsets.symmetric(
+                              horizontal: 10.0, vertical: 5.0),
+                          child: TextFormField(
+                            onChanged: (value) {
+                              controller.historyFetch();
+                            },
+                            controller: controller.textController.value,
+                            decoration: InputDecoration(
+                                hintText: 'Search',
+                                suffixIcon: IconButton(
+                                  icon: const Icon(Icons.close),
+                                  onPressed: () {
+                                    controller.clear();
+                                  },
+                                )),
+                          ),
                         ),
                       ),
                       Padding(
-                          padding: const EdgeInsets.symmetric(vertical: 16.0),
+                          padding: const EdgeInsets.symmetric(
+                              vertical: 16.0, horizontal: 16.0),
                           child: ElevatedButton(
                             onPressed: () {
                               controller.weatherFetch();
@@ -56,7 +60,6 @@ class SearchScreen extends GetView<SearchScreenController> {
                           )),
                     ]),
               ),
-              Container(height: 100),
               controller.obx((state) {
                 print(state!.t);
                 return Center(
@@ -64,8 +67,6 @@ class SearchScreen extends GetView<SearchScreenController> {
                     ValueListenableBuilder<Box>(
                         valueListenable: Hive.box('favorites').listenable(),
                         builder: (context, value, _) {
-                          print(box.containsKey(state.c.location));
-
                           return Column(
                             children: [
                               IconButton(
@@ -73,19 +74,11 @@ class SearchScreen extends GetView<SearchScreenController> {
                                     ? Icon(Icons.favorite)
                                     : Icon(Icons.favorite_border),
                                 onPressed: () {
-                                  if (box.containsKey(state.c.location)) {
-                                    box.delete(state.c.location);
-                                  } else {
-                                    box.put(state.c.location, {
-                                      "timezone": state.c.timezone,
-                                      "favorite": true
-                                    });
-                                  }
+                                  controller.likeBtn();
                                 },
                               ),
                             ],
                           );
-                          // always lsitening to the value of testKey, so if testkey ever changes this text wiget will change as well
                         }),
                     Container(
                       decoration: BoxDecoration(
@@ -134,6 +127,9 @@ class SearchScreen extends GetView<SearchScreenController> {
                               ).myPadding(10),
                             ],
                           ),
+                          SizedBox(
+                            height: 50,
+                          ),
                           Container(
                             margin: EdgeInsets.only(right: 50.0),
                             child: Column(
@@ -149,80 +145,90 @@ class SearchScreen extends GetView<SearchScreenController> {
                         ],
                       ),
                     ),
-                    Container(
-                      height: 100,
-                      child: ListView.builder(
-                        shrinkWrap: true,
-                        scrollDirection: Axis.horizontal,
-                        itemCount: state.f.length,
-                        itemBuilder: (context, index) {
-                          var forecast = state.f[index];
+                    SizedBox(
+                      height: 45,
+                    ),
+                    Padding(
+                      padding: const EdgeInsets.fromLTRB(40, 0, 40, 0),
+                      child: Container(
+                        height: 100,
+                        width: 430,
+                        child: ListView.builder(
+                          shrinkWrap: true,
+                          scrollDirection: Axis.horizontal,
+                          itemCount: state.f.length,
+                          itemBuilder: (context, index) {
+                            var forecast = state.f[index];
 
-                          return GestureDetector(
-                            onTap: () {
-                              showDialog(
-                                  context: context,
-                                  builder: (BuildContext context) {
-                                    return Container(
-                                      decoration: BoxDecoration(
-                                        gradient: LinearGradient(
-                                          begin: Alignment.topRight,
-                                          end: Alignment.bottomLeft,
-                                          colors: forecast.temp >= 294.261
-                                              ? cList1
-                                              : cList2,
+                            return GestureDetector(
+                              onTap: () {
+                                showDialog(
+                                    context: context,
+                                    builder: (BuildContext context) {
+                                      return Container(
+                                        decoration: BoxDecoration(
+                                          gradient: LinearGradient(
+                                            begin: Alignment.topRight,
+                                            end: Alignment.bottomLeft,
+                                            colors: forecast.temp >= 294.261
+                                                ? cList1
+                                                : cList2,
+                                          ),
                                         ),
-                                      ),
-                                      child: AlertDialog(
-                                        title: Text('Today'),
-                                        content: Column(
-                                          mainAxisSize: MainAxisSize.min,
-                                          children: [
-                                            Text(
-                                                DateTime.fromMillisecondsSinceEpoch(
-                                                            forecast.time *
-                                                                1000)
-                                                        .hour
-                                                        .toString() +
-                                                    ":00"),
-                                            Image(
-                                              image: NetworkImage(
-                                                  forecast.picture),
-                                            ),
-                                            Text(forecast.condition),
+                                        child: AlertDialog(
+                                          title: Text('Today'),
+                                          content: Column(
+                                            mainAxisSize: MainAxisSize.min,
+                                            children: [
+                                              Text(
+                                                  DateTime.fromMillisecondsSinceEpoch(
+                                                              forecast.time *
+                                                                  1000)
+                                                          .hour
+                                                          .toString() +
+                                                      ":00"),
+                                              Image(
+                                                image: NetworkImage(
+                                                    forecast.picture),
+                                              ),
+                                              Text(forecast.condition),
+                                            ],
+                                          ),
+                                          actions: [
+                                            TextButton(
+                                                onPressed: () {
+                                                  Navigator.of(context).pop();
+                                                },
+                                                child: Text("Close"))
                                           ],
                                         ),
-                                        actions: [
-                                          TextButton(
-                                              onPressed: () {
-                                                Navigator.of(context).pop();
-                                              },
-                                              child: Text("Close"))
-                                        ],
+                                      );
+                                    });
+                              },
+                              child: Container(
+                                  margin: EdgeInsets.symmetric(horizontal: 10),
+                                  width: 50,
+                                  height: 50,
+                                  child: Column(
+                                    children: [
+                                      Text(DateTime.fromMillisecondsSinceEpoch(
+                                                  forecast.time * 1000)
+                                              .hour
+                                              .toString() +
+                                          ":00"),
+                                      Image(
+                                        image: NetworkImage(forecast.picture),
                                       ),
-                                    );
-                                  });
-                            },
-                            child: Container(
-                                margin: EdgeInsets.symmetric(horizontal: 10),
-                                width: 50,
-                                height: 50,
-                                child: Column(
-                                  children: [
-                                    Text(DateTime.fromMillisecondsSinceEpoch(
-                                                forecast.time * 1000)
-                                            .hour
-                                            .toString() +
-                                        ":00"),
-                                    Image(
-                                      image: NetworkImage(forecast.picture),
-                                    ),
-                                    Text(forecast.condition),
-                                  ],
-                                )),
-                          );
-                        },
+                                      Text(forecast.condition),
+                                    ],
+                                  )),
+                            );
+                          },
+                        ),
                       ),
+                    ),
+                    SizedBox(
+                      height: 45,
                     ),
                     Container(
                       child: DataTable(
@@ -302,13 +308,3 @@ class SearchScreen extends GetView<SearchScreenController> {
             ])));
   }
 }
-
-//add valuelistenable around container, so you can see it update. do the same thing we did for profile screen. Implement a listview builder.
-
-//hw design search bar, ui of it
-// when i click on the search bar and start typing, i want to set the state of my search screen controller to empty so that i can see my history. when i start typing how can i execute a function.
-
-// in the text input field wiget, theres something that allows me to start typing, when i do start typing, ensure that the state is empty. 
-
-//change the state by doing controller. and call the function in the controller
-// search hiveupdatevalue

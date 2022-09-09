@@ -6,6 +6,8 @@ import 'package:weather_app_2/screens/searchscreen.dart';
 import '../controllers/controlScreenController.dart';
 import '../main.dart';
 
+//animated container for page transition
+
 class ControllScreen extends StatefulWidget {
   const ControllScreen({Key? key}) : super(key: key);
 
@@ -24,7 +26,7 @@ class _ControllScreenState extends State<ControllScreen> {
         items: [
           BottomNavigationBarItem(icon: Icon(Icons.home), label: 'Home'),
           BottomNavigationBarItem(icon: Icon(Icons.search), label: 'Search'),
-          BottomNavigationBarItem(icon: Icon(Icons.person), label: 'Profile') //
+          BottomNavigationBarItem(icon: Icon(Icons.favorite), label: 'Liked') //
         ],
         currentIndex: selectedIndex,
         onTap: (index) {
@@ -52,7 +54,7 @@ class ControlScreen extends GetView<ControlScreenController> {
             BottomNavigationBarItem(icon: Icon(Icons.home), label: 'Home'),
             BottomNavigationBarItem(icon: Icon(Icons.search), label: 'Search'),
             BottomNavigationBarItem(
-                icon: Icon(Icons.person), label: 'Profile') //
+                icon: Icon(Icons.favorite), label: 'Liked') //
           ],
           currentIndex: controller.selectedIndex.value,
           onTap: (index) {

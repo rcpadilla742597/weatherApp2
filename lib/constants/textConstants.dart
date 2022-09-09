@@ -17,5 +17,8 @@ final profileCard2 = const TextStyle(
     fontWeight: FontWeight.w600,
     color: Color.fromARGB(255, 22, 22, 22));
 
-final cardDesc =
-    const TextStyle(fontSize: 15.0, color: Color.fromARGB(255, 22, 22, 22));
+final profileScreenCard = const TextStyle(
+    fontWeight: FontWeight.w400,
+    fontSize: 16.0,
+    color: Color.fromARGB(255, 35, 35, 35),
+    height: 1.5);
