@@ -89,4 +89,6 @@ class HomeScreenController extends GetxController
           status: RxStatus.error('error'));
     }
   }
+
+  void updateEditState() {}
 }

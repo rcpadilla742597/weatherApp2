@@ -1,7 +1,6 @@
 import 'dart:convert';
 import 'dart:io';
 import 'package:flutter/material.dart';
-import 'package:get/get_state_manager/get_state_manager.dart';
 import 'package:get/state_manager.dart';
 import 'package:hive_flutter/hive_flutter.dart';
 import 'package:http/http.dart' as http;
@@ -9,7 +8,6 @@ import 'package:weather_app_2/models/homescreen/currentweather_model.dart';
 import 'package:weather_app_2/models/homescreen/forecastweather_model.dart';
 import 'package:weather_app_2/models/homescreen/timelineweather_model.dart';
 import 'package:weather_app_2/models/weather_model.dart';
-import 'package:dart_ipify/dart_ipify.dart';
 
 class SearchScreenController extends GetxController
     with StateMixin<WeatherModel> {

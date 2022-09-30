@@ -9,6 +9,7 @@ import 'package:weather_app_2/screens/controlscreen.dart';
 import 'controllers/controlScreenController.dart';
 import 'controllers/homescreen_controller.dart';
 import 'controllers/networkcontroller.dart';
+import 'controllers/profilescreencontroller.dart';
 import 'controllers/searchscreencontroller.dart';
 import 'package:hive/hive.dart';
 import 'package:hive_flutter/hive_flutter.dart';
@@ -36,6 +37,7 @@ class MyApp extends StatelessWidget {
     Get.put(SearchScreenController());
     Get.put(ControlScreenController());
     Get.put(NetworkController());
+    Get.put(ProfileScreenController());
     //network controller goes here
     return GetMaterialApp(
       debugShowCheckedModeBanner: false,
