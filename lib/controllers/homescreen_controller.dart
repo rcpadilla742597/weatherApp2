@@ -86,7 +86,7 @@ class HomeScreenController extends GetxController
       }
     } catch (e) {
       change(WeatherModel(c: CurrentWeatherModel.empty()),
-          status: RxStatus.error('error'));
+          status: RxStatus.error('$e'));
     }
   }
 

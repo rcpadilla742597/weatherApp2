@@ -1,7 +1,10 @@
+import 'dart:convert';
+
 import 'package:flutter/material.dart';
 import 'package:get/get.dart';
 import 'package:weather_app_2/constants/colors.dart';
 import 'package:weather_app_2/constants/urlConstants.dart';
+import 'package:weather_app_2/models/geoModel.dart';
 import 'package:weather_app_2/models/homescreen/articlemodel.dart';
 import 'package:weather_app_2/models/homescreen/currentweather_model.dart';
 import 'package:weather_app_2/models/homescreen/extenstions.dart';
@@ -26,6 +29,23 @@ Future<void> main() async {
     box2.put('historyList', []);
   }
 
+  //Use to clear, error will appear
+  // await box2.clear();
+  // await box.clear();
+
+  //if (kDebugMode)
+  String jsonString =
+      r'{"name":"London","lat":37.1289771,"lon":-84.0832646,"country":"US"}';
+  Map<String, dynamic> jsonMap = json.decode(jsonString);
+  GeoModel geoModelJson = GeoModel.fromJson(jsonMap);
+  GeoModel rundGeoModel = GeoModel(
+      name: 'London',
+      state: 'Kentucky',
+      country: 'US',
+      lat: 37.1289771,
+      lon: -84.0832646);
+
+  print(geoModelJson.toString());
   runApp(const MyApp());
 }
 

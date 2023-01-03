@@ -5,6 +5,7 @@ import 'package:weather_app_2/constants/colors.dart';
 import 'package:weather_app_2/constants/textConstants.dart';
 import 'package:weather_app_2/controllers/homescreen_controller.dart';
 import 'package:weather_app_2/controllers/searchscreencontroller.dart';
+import 'package:weather_app_2/models/geoModel.dart';
 import 'package:weather_app_2/models/homescreen/currentweather_model.dart';
 import 'package:weather_app_2/models/homescreen/extenstions.dart';
 import 'package:weather_app_2/screens/controlscreen.dart';
@@ -54,214 +55,247 @@ class SearchScreen extends GetView<SearchScreenController> {
                               vertical: 16.0, horizontal: 16.0),
                           child: ElevatedButton(
                             onPressed: () {
-                              controller.weatherFetch();
+                              controller.geoCoding();
                             },
                             child: const Text('Submit'),
                           )),
                     ]),
               ),
               controller.obx((state) {
-                print(state!.t);
-                return Center(
-                  child: Column(children: [
-                    ValueListenableBuilder<Box>(
-                        valueListenable: Hive.box('favorites').listenable(),
-                        builder: (context, value, _) {
-                          return Column(
-                            children: [
-                              IconButton(
-                                icon: box.containsKey(state.c.location)
-                                    ? Icon(Icons.favorite)
-                                    : Icon(Icons.favorite_border),
-                                onPressed: () {
-                                  controller.likeBtn();
-                                },
-                              ),
-                            ],
-                          );
-                        }),
-                    Container(
-                      decoration: BoxDecoration(
-                        gradient: LinearGradient(
-                          begin: Alignment.topRight,
-                          end: Alignment.bottomLeft,
-                          colors: state.c.temp >= 294.261 ? cList1 : cList2,
+                if (state == SearchScreenStatus.direct) {
+                  return Center(
+                    child: Column(children: [
+                      ValueListenableBuilder<Box>(
+                          valueListenable: Hive.box('favorites').listenable(),
+                          builder: (context, value, _) {
+                            return Column(
+                              children: [
+                                IconButton(
+                                  icon: box.containsKey(
+                                          controller.w_model.value.c.location)
+                                      ? Icon(Icons.favorite)
+                                      : Icon(Icons.favorite_border),
+                                  onPressed: () {
+                                    controller.likeBtn();
+                                  },
+                                ),
+                              ],
+                            );
+                          }),
+                      Container(
+                        decoration: BoxDecoration(
+                          gradient: LinearGradient(
+                            begin: Alignment.topRight,
+                            end: Alignment.bottomLeft,
+                            colors: controller.w_model.value.c.temp >= 294.261
+                                ? cList1
+                                : cList2,
+                          ),
+                          borderRadius: BorderRadius.all(Radius.circular(15)),
                         ),
-                        borderRadius: BorderRadius.all(Radius.circular(15)),
-                      ),
-                      width: 375,
-                      height: 250,
-                      child: Row(
-                        mainAxisAlignment: MainAxisAlignment.spaceBetween,
-                        children: [
-                          Column(
-                            crossAxisAlignment: CrossAxisAlignment.start,
-                            mainAxisAlignment: MainAxisAlignment.spaceEvenly,
-                            children: [
-                              Text(
-                                state.c.location,
-                                style: TextStyle(
-                                    fontWeight: FontWeight.w700,
-                                    fontSize: 20.0,
-                                    color: Colors.white),
-                              ).myPadding(10),
-                              Text(
-                                state.c.time.toReadable(),
-                                style: TextStyle(
-                                    fontSize: 15.0, color: Colors.white),
-                              ).myPadding(10),
-                              //303.2.toFString()
-                              Text(
-                                state.c.temp.toFString(),
-                                style: TextStyle(
-                                    fontWeight: FontWeight.w500,
-                                    fontSize: 60.0,
-                                    color: Colors.white),
-                              ).myPadding(10),
-                              Text(
-                                state.c.condition,
-                                style: TextStyle(
-                                    fontWeight: FontWeight.w600,
-                                    fontSize: 15.0,
-                                    color: Colors.white),
-                              ).myPadding(10),
-                            ],
-                          ),
-                          SizedBox(
-                            height: 50,
-                          ),
-                          Container(
-                            margin: EdgeInsets.only(right: 50.0),
-                            child: Column(
-                              crossAxisAlignment: CrossAxisAlignment.end,
+                        width: 375,
+                        height: 250,
+                        child: Row(
+                          mainAxisAlignment: MainAxisAlignment.spaceBetween,
+                          children: [
+                            Column(
+                              crossAxisAlignment: CrossAxisAlignment.start,
                               mainAxisAlignment: MainAxisAlignment.spaceEvenly,
                               children: [
-                                Image(
-                                  image: NetworkImage(state.c.picture),
-                                )
+                                Text(
+                                  controller.w_model.value.c.location,
+                                  style: TextStyle(
+                                      fontWeight: FontWeight.w700,
+                                      fontSize: 20.0,
+                                      color: Colors.white),
+                                ).myPadding(10),
+                                Text(
+                                  controller.w_model.value.c.time.toReadable(),
+                                  style: TextStyle(
+                                      fontSize: 15.0, color: Colors.white),
+                                ).myPadding(10),
+                                //303.2.toFString()
+                                Text(
+                                  controller.w_model.value.c.temp.toFString(),
+                                  style: TextStyle(
+                                      fontWeight: FontWeight.w500,
+                                      fontSize: 60.0,
+                                      color: Colors.white),
+                                ).myPadding(10),
+                                Text(
+                                  controller.w_model.value.c.condition,
+                                  style: TextStyle(
+                                      fontWeight: FontWeight.w600,
+                                      fontSize: 15.0,
+                                      color: Colors.white),
+                                ).myPadding(10),
                               ],
                             ),
-                          ),
-                        ],
-                      ),
-                    ),
-                    SizedBox(
-                      height: 45,
-                    ),
-                    Padding(
-                      padding: const EdgeInsets.fromLTRB(40, 0, 40, 0),
-                      child: Container(
-                        height: 100,
-                        width: 430,
-                        child: ListView.builder(
-                          shrinkWrap: true,
-                          scrollDirection: Axis.horizontal,
-                          itemCount: state.f.length,
-                          itemBuilder: (context, index) {
-                            var forecast = state.f[index];
-
-                            return GestureDetector(
-                              onTap: () {
-                                showDialog(
-                                    context: context,
-                                    builder: (BuildContext context) {
-                                      return Container(
-                                        decoration: BoxDecoration(
-                                          gradient: LinearGradient(
-                                            begin: Alignment.topRight,
-                                            end: Alignment.bottomLeft,
-                                            colors: forecast.temp >= 294.261
-                                                ? cList1
-                                                : cList2,
-                                          ),
-                                        ),
-                                        child: AlertDialog(
-                                          title: Text('Today'),
-                                          content: Column(
-                                            mainAxisSize: MainAxisSize.min,
-                                            children: [
-                                              Text(
-                                                  DateTime.fromMillisecondsSinceEpoch(
-                                                              forecast.time *
-                                                                  1000)
-                                                          .hour
-                                                          .toString() +
-                                                      ":00"),
-                                              Image(
-                                                image: NetworkImage(
-                                                    forecast.picture),
-                                              ),
-                                              Text(forecast.condition),
-                                            ],
-                                          ),
-                                          actions: [
-                                            TextButton(
-                                                onPressed: () {
-                                                  Navigator.of(context).pop();
-                                                },
-                                                child: Text("Close"))
-                                          ],
-                                        ),
-                                      );
-                                    });
-                              },
-                              child: Container(
-                                  margin: EdgeInsets.symmetric(horizontal: 10),
-                                  width: 50,
-                                  height: 50,
-                                  child: Column(
-                                    children: [
-                                      Text(DateTime.fromMillisecondsSinceEpoch(
-                                                  forecast.time * 1000)
-                                              .hour
-                                              .toString() +
-                                          ":00"),
-                                      Image(
-                                        image: NetworkImage(forecast.picture),
-                                      ),
-                                      Text(forecast.condition),
-                                    ],
-                                  )),
-                            );
-                          },
+                            SizedBox(
+                              height: 50,
+                            ),
+                            Container(
+                              margin: EdgeInsets.only(right: 50.0),
+                              child: Column(
+                                crossAxisAlignment: CrossAxisAlignment.end,
+                                mainAxisAlignment:
+                                    MainAxisAlignment.spaceEvenly,
+                                children: [
+                                  Image(
+                                    image: NetworkImage(
+                                        controller.w_model.value.c.picture),
+                                  )
+                                ],
+                              ),
+                            ),
+                          ],
                         ),
                       ),
-                    ),
-                    SizedBox(
-                      height: 45,
-                    ),
-                    Container(
-                      child: DataTable(
-                          headingRowHeight: 0.0, // This hides the tabs
-                          horizontalMargin: 0.0, // Adjusts the lines
-                          columnSpacing: 60,
-                          columns: const <DataColumn>[
-                            DataColumn(label: Text('Day of week')),
-                            DataColumn(label: Text('Condition')),
-                            DataColumn(label: Text('Temperature')),
-                          ],
-                          rows: state.t.map((weather) {
-                            int day = weather.time;
-                            double temp = weather.temp;
-                            return DataRow(cells: <DataCell>[
-                              DataCell(Text(day.dayOfWeek())),
-                              DataCell(
-                                Center(
-                                    child: Image(
-                                  image: NetworkImage(weather.picture),
+                      SizedBox(
+                        height: 45,
+                      ),
+                      Padding(
+                        padding: const EdgeInsets.fromLTRB(40, 0, 40, 0),
+                        child: Container(
+                          height: 100,
+                          width: 430,
+                          child: ListView.builder(
+                            shrinkWrap: true,
+                            scrollDirection: Axis.horizontal,
+                            itemCount: controller.w_model.value.f.length,
+                            itemBuilder: (context, index) {
+                              var forecast = controller.w_model.value.f[index];
+
+                              return GestureDetector(
+                                onTap: () {
+                                  showDialog(
+                                      context: context,
+                                      builder: (BuildContext context) {
+                                        return Container(
+                                          decoration: BoxDecoration(
+                                            gradient: LinearGradient(
+                                              begin: Alignment.topRight,
+                                              end: Alignment.bottomLeft,
+                                              colors: forecast.temp >= 294.261
+                                                  ? cList1
+                                                  : cList2,
+                                            ),
+                                          ),
+                                          child: AlertDialog(
+                                            title: Text('Today'),
+                                            content: Column(
+                                              mainAxisSize: MainAxisSize.min,
+                                              children: [
+                                                Text(
+                                                    DateTime.fromMillisecondsSinceEpoch(
+                                                                forecast.time *
+                                                                    1000)
+                                                            .hour
+                                                            .toString() +
+                                                        ":00"),
+                                                Image(
+                                                  image: NetworkImage(
+                                                      forecast.picture),
+                                                ),
+                                                Text(forecast.condition),
+                                              ],
+                                            ),
+                                            actions: [
+                                              TextButton(
+                                                  onPressed: () {
+                                                    Navigator.of(context).pop();
+                                                  },
+                                                  child: Text("Close"))
+                                            ],
+                                          ),
+                                        );
+                                      });
+                                },
+                                child: Container(
+                                    margin:
+                                        EdgeInsets.symmetric(horizontal: 10),
+                                    width: 50,
+                                    height: 50,
+                                    child: Column(
+                                      children: [
+                                        Text(
+                                            DateTime.fromMillisecondsSinceEpoch(
+                                                        forecast.time * 1000)
+                                                    .hour
+                                                    .toString() +
+                                                ":00"),
+                                        Image(
+                                          image: NetworkImage(forecast.picture),
+                                        ),
+                                        Text(forecast.condition),
+                                      ],
+                                    )),
+                              );
+                            },
+                          ),
+                        ),
+                      ),
+                      SizedBox(
+                        height: 45,
+                      ),
+                      Container(
+                        child: DataTable(
+                            headingRowHeight: 0.0, // This hides the tabs
+                            horizontalMargin: 0.0, // Adjusts the lines
+                            columnSpacing: 60,
+                            columns: const <DataColumn>[
+                              DataColumn(label: Text('Day of week')),
+                              DataColumn(label: Text('Condition')),
+                              DataColumn(label: Text('Temperature')),
+                            ],
+                            rows: controller.w_model.value.t.map((weather) {
+                              int day = weather.time;
+                              double temp = weather.temp;
+                              return DataRow(cells: <DataCell>[
+                                DataCell(Text(day.dayOfWeek())),
+                                DataCell(
+                                  Center(
+                                      child: Image(
+                                    image: NetworkImage(weather.picture),
+                                  )),
+                                ),
+                                DataCell(Row(
+                                  mainAxisAlignment: MainAxisAlignment.end,
+                                  children: [
+                                    Text(temp.toFString()),
+                                  ],
                                 )),
-                              ),
-                              DataCell(Row(
-                                mainAxisAlignment: MainAxisAlignment.end,
-                                children: [
-                                  Text(temp.toFString()),
-                                ],
-                              )),
-                            ]);
-                          }).toList()),
-                    ),
-                  ]),
-                );
+                              ]);
+                            }).toList()),
+                      ),
+                    ]),
+                  );
+                } else {
+                  return Container(
+                      child: ListView.builder(
+                    shrinkWrap: true,
+                    itemCount: controller.options.toList().length,
+                    //an x amount of geomodels exist in controller.options
+                    itemBuilder: (BuildContext context, int index) {
+                      // IF {MYCOLOR =}
+                      return InkWell(
+                        onTap: () {
+                          controller
+                              .fr0mList(controller.options.toList()[index]);
+                          //THE FUNCTION NEEDS TO PASS in a geomodel
+                        },
+                        child: Container(
+                            height: 60,
+                            decoration: BoxDecoration(
+                                color: index % 2 == 0
+                                    ? Colors.amber
+                                    : Colors.blue),
+                            child:
+                                Text('${controller.options.toList()[index]}')),
+                      );
+                    },
+                  )); //options UI goes here
+                }
               },
                   onEmpty: ValueListenableBuilder<Box>(
                       valueListenable: Hive.box('history').listenable(),
@@ -285,14 +319,18 @@ class SearchScreen extends GetView<SearchScreenController> {
                                   itemBuilder: (context, index) {
                                     var value =
                                         listFromH.reversed.toList()[index];
+                                    var currentWeather =
+                                        CurrentWeatherModel.fromHiveHistoryJson(
+                                            value);
                                     if (value != null) {
                                       return TextButton(
                                         onPressed: () {
-                                          controller.reFetch(value);
+                                          controller
+                                              .fromHistory(currentWeather);
                                         },
                                         //pass textstyle from constants files
                                         child: Text(
-                                          value,
+                                          currentWeather.location,
                                           textAlign: TextAlign.start,
                                           style: listItemStyle,
                                         ),

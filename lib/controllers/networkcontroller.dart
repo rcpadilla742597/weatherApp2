@@ -1,19 +1,9 @@
 import 'dart:io';
-import 'package:flutter/material.dart';
 import 'package:get/get.dart';
-import 'package:weather_app_2/constants/colors.dart';
 import 'package:weather_app_2/constants/urlConstants.dart';
 import 'package:weather_app_2/models/homescreen/articlemodel.dart';
-import 'package:weather_app_2/models/homescreen/currentweather_model.dart';
-import 'package:weather_app_2/models/homescreen/extenstions.dart';
-import 'package:weather_app_2/screens/controlscreen.dart';
-import 'package:hive/hive.dart';
-import 'package:hive_flutter/hive_flutter.dart';
-import 'package:html/dom.dart';
-import 'package:html/dom_parsing.dart';
 import 'package:html/parser.dart';
 import 'package:http/http.dart' as http;
-import 'package:weather_app_2/main.dart';
 import 'package:url_launcher/url_launcher.dart';
 
 class NetworkController extends GetxController with StateMixin<List<Article>> {

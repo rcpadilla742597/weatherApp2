@@ -10,6 +10,8 @@ import 'package:weather_app_2/models/homescreen/extenstions.dart';
 import '../controllers/controlScreenController.dart';
 import '../controllers/networkcontroller.dart';
 import '../controllers/searchscreencontroller.dart';
+import '../models/geoModel.dart';
+import '../models/homescreen/currentweather_model.dart';
 
 class ProfileCard extends StatefulWidget {
   ProfileCard({
@@ -37,7 +39,8 @@ class _ProfileCardState extends State<ProfileCard> {
   void initState() {
     super.initState;
     controller1 = Get.put(NetworkController(), tag: widget.index.toString());
-    controller1.makeList('${widget.box.keys.toList()[widget.index]}');
+    controller1
+        .makeList('${widget.box.keys.toList()[widget.index].split(',')[0]}');
   }
 
   @override
@@ -60,7 +63,9 @@ class _ProfileCardState extends State<ProfileCard> {
                     child: TextButton.icon(
                         onPressed: () {
                           csc.changeIndex(1);
-                          scc.reFetch(widget.box.keys.toList()[widget.index]);
+                          var model = widget.box.values.toList()[widget.index];
+                          print(model);
+                          scc.fr0mList(GeoModel.fromJson(model));
                         },
                         icon: Icon(Icons.cloud),
                         label: Text('View Weather')),

@@ -26,6 +26,7 @@ class ProfileScreen extends GetView<ProfileScreenController> {
                           icon: controller.editIcon()),
                       Expanded(
                         child: ListView.builder(
+                          reverse: true,
                           itemCount: box.keys.length,
                           itemBuilder: (context, index) {
                             // buttonCarouselController.startAutoPlay();

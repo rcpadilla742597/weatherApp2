@@ -5,7 +5,7 @@ import 'package:intl/intl.dart';
 // Kelvin to Fahrenheit
 extension WeatherExtensions on double {
   String toFString() {
-    var convert = (this - 273.0) * (9 / 5) + 32.0;
+    double convert = (this - 273.0) * (9 / 5) + 32.0;
     convert = convert.roundToDouble();
     return '$convert°';
   }

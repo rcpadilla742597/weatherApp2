@@ -207,7 +207,7 @@ class HomeScreen extends GetView<HomeScreenController> {
         onEmpty: Text('No data found'),
         // here also you can set your own error widget, but by
         // default will be an Center(child:Text(error))
-        onError: (error) => Text('error'),
+        onError: (error) => Text('$error'),
       ),
       backgroundColor: Colors.white,
     );

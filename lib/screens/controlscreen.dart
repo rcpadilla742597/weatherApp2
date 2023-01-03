@@ -34,6 +34,7 @@ class _ControllScreenState extends State<ControllScreen> {
           //search bar no funtionality
           setState(() {
             selectedIndex = index;
+            pages[2] = ProfileScreen();
           });
         },
       ),
@@ -59,6 +60,7 @@ class ControlScreen extends GetView<ControlScreenController> {
           currentIndex: controller.selectedIndex.value,
           onTap: (index) {
             controller.changeIndex(index);
+            pages[2] = ProfileScreen();
           },
         ),
       ),
