@@ -29,7 +29,7 @@ class HomeScreen extends GetView<HomeScreenController> {
                     ),
                     borderRadius: BorderRadius.all(Radius.circular(15)),
                   ),
-                  width: 375,
+                  width: 450,
                   height: 250,
                   child: Row(
                     mainAxisAlignment: MainAxisAlignment.spaceBetween,

@@ -69,7 +69,7 @@ class CurrentWeatherModel {
     //ADD LON AND LAT
   }
 
-  factory CurrentWeatherModel.fromHiveHistoryJson(Map<String, dynamic> json) {
+  factory CurrentWeatherModel.fromHiveHistoryJson(json) {
     return CurrentWeatherModel(
         time: json['time'],
         location: json['location'],

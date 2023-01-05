@@ -26,7 +26,7 @@ class ProfileScreen extends GetView<ProfileScreenController> {
                           icon: controller.editIcon()),
                       Expanded(
                         child: ListView.builder(
-                          reverse: true,
+                          // reverse: true,
                           itemCount: box.keys.length,
                           itemBuilder: (context, index) {
                             // buttonCarouselController.startAutoPlay();
@@ -34,8 +34,12 @@ class ProfileScreen extends GetView<ProfileScreenController> {
                               int date = box.values.toList()[index]['timezone'];
                               if (controller.editState) {
                                 return Dismissible(
+                                  onDismissed: (direction) {
+                                    box.deleteAt((index));
+                                    print(box.keys);
+                                  },
                                   // background: Container(color: Colors.red),
-                                  key: Key('card ${index}'),
+                                  key: Key(box.keys.toList()[index]),
                                   child: ProfileCard(
                                       box: box, date: date, index: index),
                                 );
